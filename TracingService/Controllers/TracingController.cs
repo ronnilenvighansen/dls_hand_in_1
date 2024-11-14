@@ -41,25 +41,5 @@ namespace TracingService.Controllers
             }
             return Ok(traces);
         }
-
-        [HttpPost]
-        public IActionResult PostTrace([FromBody] TraceEntry traceEntry)
-        {
-            if (traceEntry == null || string.IsNullOrWhiteSpace(traceEntry.Message))
-            {
-                return BadRequest("Trace message cannot be null or empty.");
-            }
-
-            try
-            {
-                _logger.LogInformation($"Trace ID: {traceEntry.TraceId} - {traceEntry.Message}");
-                return Ok("Trace message recorded.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while recording the trace message.");
-                return StatusCode(500, "An internal server error occurred.");
-            }
-        }
     }
 }

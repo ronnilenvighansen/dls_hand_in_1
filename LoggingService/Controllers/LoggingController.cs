@@ -41,37 +41,5 @@ namespace LoggingService.Controllers
             }
             return Ok(logs);
         }
-
-        [HttpPost]
-        public IActionResult PostLog([FromBody] LogEntry logEntry)
-        {
-            if (logEntry == null || string.IsNullOrWhiteSpace(logEntry.Message) || string.IsNullOrWhiteSpace(logEntry.LogLevel))
-            {
-                return BadRequest("Log message and level cannot be null or empty.");
-            }
-
-            try
-            {
-                switch (logEntry.LogLevel.ToLower())
-                {
-                    case "error":
-                        _logger.LogError(logEntry.Message);
-                        break;
-                    case "warning":
-                        _logger.LogWarning(logEntry.Message);
-                        break;
-                    case "information":
-                    default:
-                        _logger.LogInformation(logEntry.Message);
-                        break;
-                }
-                return Ok("Log message recorded.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while logging the message.");
-                return StatusCode(500, "An internal server error occurred.");
-            }
-        }
     }
 }
