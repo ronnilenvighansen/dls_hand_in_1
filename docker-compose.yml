@@ -1,0 +1,31 @@
+services:
+  loggingservice:
+    build:
+      context: .
+      dockerfile: LoggingService/Dockerfile
+    ports:
+      - "9870:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - sqlite
+    networks:
+      - app_network
+  
+  sqlite:
+    image: keinos/sqlite3:latest
+    stdin_open: true
+    tty: true
+    volumes:
+      - app_data:/root/db/
+    command: ["sqlite3", "logs.db"]
+    deploy:
+      replicas: 2
+    networks:
+      - app_network
+
+volumes:
+  app_data:
+
+networks:
+  app_network:

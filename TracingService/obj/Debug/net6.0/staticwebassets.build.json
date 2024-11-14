@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "7mGPLwmeLfURtPRy9q7BgEVWwWafSrjcVGPSaJMG0zg=",
+  "Source": "TracingService",
+  "BasePath": "_content/TracingService",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
