@@ -8,17 +8,42 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
-      - sqlite
+      - loggingdatabase
     networks:
       - app_network
   
-  sqlite:
+  loggingdatabase:
     image: keinos/sqlite3:latest
     stdin_open: true
     tty: true
     volumes:
       - app_data:/root/db/
     command: ["sqlite3", "logs.db"]
+    deploy:
+      replicas: 2
+    networks:
+      - app_network
+  
+  tracingservice:
+    build:
+      context: .
+      dockerfile: TracingService/Dockerfile
+    ports:
+      - "9871:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - tracingdatabase
+    networks:
+      - app_network
+  
+  tracingdatabase:
+    image: keinos/sqlite3:latest
+    stdin_open: true
+    tty: true
+    volumes:
+      - app_data:/root/db/
+    command: ["sqlite3", "traces.db"]
     deploy:
       replicas: 2
     networks:

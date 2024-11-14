@@ -1,25 +1,37 @@
+using Microsoft.Data.Sqlite;
+using TracingService.Logging;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var connectionString = "Data Source=traces.db";
+
+// Initialize the SQLite database with Traces table
+using (var connection = new SqliteConnection(connectionString))
+{
+    connection.Open();
+    var command = connection.CreateCommand();
+    command.CommandText = @"
+        CREATE TABLE IF NOT EXISTS Traces (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            TraceId TEXT,
+            Message TEXT,
+            Timestamp TEXT
+        )";
+    command.ExecuteNonQuery();
+}
+
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.ClearProviders();
+    loggingBuilder.AddProvider(new SQLiteTraceLoggerProvider(connectionString));
+});
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
+app.UseRouting();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
