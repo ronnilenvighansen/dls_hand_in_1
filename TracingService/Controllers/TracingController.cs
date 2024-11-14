@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using TracingService.Logging;
 using Microsoft.Data.Sqlite;
 
 namespace TracingService.Controllers
@@ -18,7 +16,6 @@ namespace TracingService.Controllers
             _connectionString = "Data Source=traces.db";
         }
 
-        // Endpoint to get all trace entries
         [HttpGet("all")]
         public async Task<IActionResult> GetAllTraces()
         {
@@ -45,7 +42,6 @@ namespace TracingService.Controllers
             return Ok(traces);
         }
 
-        // Endpoint to post a new trace entry
         [HttpPost]
         public IActionResult PostTrace([FromBody] TraceEntry traceEntry)
         {

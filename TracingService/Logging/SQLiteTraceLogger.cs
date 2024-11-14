@@ -20,7 +20,7 @@ namespace TracingService.Logging
             if (!IsEnabled(logLevel)) return;
 
             var traceMessage = formatter(state, exception);
-            var traceId = Guid.NewGuid().ToString(); // Unique ID for the trace
+            var traceId = Guid.NewGuid().ToString();
             var timestamp = DateTime.UtcNow;
 
             using var connection = new SqliteConnection(_connectionString);
@@ -41,7 +41,6 @@ namespace TracingService.Logging
             }
             catch (Exception ex)
             {
-                // Log to a fallback mechanism or silently fail
                 Console.WriteLine($"Error logging trace to SQLite: {ex.Message}");
             }
         }

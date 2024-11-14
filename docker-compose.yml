@@ -3,14 +3,16 @@ services:
     build:
       context: .
       dockerfile: LoggingService/Dockerfile
-    ports:
-      - "9870:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
       - loggingdatabase
     networks:
       - app_network
+    volumes:
+      - app_data:/root/db/
+    deploy:
+      replicas: 3
   
   loggingdatabase:
     image: keinos/sqlite3:latest
@@ -28,14 +30,16 @@ services:
     build:
       context: .
       dockerfile: TracingService/Dockerfile
-    ports:
-      - "9871:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
       - tracingdatabase
     networks:
       - app_network
+    volumes:
+      - app_data:/root/db/
+    deploy:
+      replicas: 3
   
   tracingdatabase:
     image: keinos/sqlite3:latest
@@ -46,6 +50,18 @@ services:
     command: ["sqlite3", "traces.db"]
     deploy:
       replicas: 2
+    networks:
+      - app_network
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - loggingservice
+      - tracingservice
     networks:
       - app_network
 

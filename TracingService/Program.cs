@@ -5,7 +5,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = "Data Source=traces.db";
 
-// Initialize the SQLite database with Traces table
 using (var connection = new SqliteConnection(connectionString))
 {
     connection.Open();
