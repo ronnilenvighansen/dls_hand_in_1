@@ -1,25 +1,36 @@
+using Microsoft.Data.Sqlite;
+using LoggingService.Logging;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var connectionString = "Data Source=logs.db";
+
+using (var connection = new SqliteConnection(connectionString))
+{
+    connection.Open();
+    var command = connection.CreateCommand();
+    command.CommandText = @"
+        CREATE TABLE IF NOT EXISTS Logs (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            LogLevel TEXT,
+            Message TEXT,
+            Timestamp TEXT
+        )";
+    command.ExecuteNonQuery();
+}
+
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.ClearProviders();
+    loggingBuilder.AddProvider(new SQLiteLoggerProvider(connectionString));
+});
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
+app.UseRouting();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
